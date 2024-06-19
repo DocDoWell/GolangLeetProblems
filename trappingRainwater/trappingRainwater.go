@@ -6,70 +6,64 @@ import (
 )
 
 func trap(height []int) int {
+
+	fmt.Println(" ")
+
 	var output = 0
 
 	if len(height) < 3 {
 		return 0
 	}
 
-	var leftBoundry = instantiateLeftBoundary(height)
-	var rightBoundary = getClosingBoundary(leftBoundry, height)
-	output = output + computeRainWaterTrapped(leftBoundry, rightBoundary, height)
-	fmt.Println("left is ", leftBoundry, " right is ", rightBoundary, " output is ", output)
+	start:=0
+	end:= len(height)-1
 
-	for rightBoundary < (len(height) - 1) {
-		leftBoundry = rightBoundary
-		rightBoundary = getClosingBoundary(leftBoundry, height)
-		output = output + computeRainWaterTrapped(leftBoundry, rightBoundary, height)
-		fmt.Println("left is ", leftBoundry, " right is ", rightBoundary, " output is ", output)
-	}
-
-	return output
-}
-
-func instantiateLeftBoundary(height []int) int {
-	var leftBoundary = 0
-	for {
-		if height[leftBoundary] == 0 {
-			leftBoundary++
-		} else {
+	for{
+		if height[start] == 0{
+			start++
+		}else{
 			break
 		}
 	}
-	return leftBoundary
-}
 
-func computeRainWaterTrapped(leftBoundry, rightBoundary int, height []int) (output int) {
-	output = 0
-	var pointer = leftBoundry + 1
-	for pointer < rightBoundary {
-		fmt.Print("at ", pointer, " with ", int(math.Min(float64(height[leftBoundry]), float64(height[rightBoundary]))) - height[pointer])
-		if height[pointer] < height[leftBoundry] {
-			output = output + int(math.Min(float64(height[leftBoundry]), float64(height[rightBoundary]))) - height[pointer]
-			fmt.Print(" output is ", output)
-		}	
-		pointer++
-		fmt.Println(" ")
+	for{
+		if height[end] == 0{
+			end--
+		}else{
+			break
+		}
+	}
+
+	for i:=start+1; i < end;i++{
+			maxRight:= getMaximumRight(i, height)
+			maxLeft:= getMaximumLeft(i, height)
+			fmt.Print("maxLeft is ", maxLeft, " maxRight is ", maxRight, " i is ", i)
+			trapped:= int(math.Min(float64(maxLeft), float64(maxRight))) - height[i]
+			if trapped >= 0{
+				output = output + trapped
+			}
+			
+			fmt.Print(" output added is ", int(math.Min(float64(maxLeft), float64(maxRight))) - height[i])
+			fmt.Println(" ")
 	}
 	return output
 }
 
-func getClosingBoundary(leftPointer int, height []int) int {
-	max := getMaximumHeight(height)
-	for i := leftPointer + 1; i < len(height); i++ {
-		if (height[i] >= height[leftPointer]) && (height[i]<max) {
-			return i
+func getMaximumLeft(index int, height []int) (output int){
+	output = 0
+	for j:=0; j< index; j++{
+		if height[j] > output{
+			output = height[j]
 		}
 	}
-	return len(height) - 1
+	return output
 }
 
-
-func getMaximumHeight(height []int) (output int){
+func getMaximumRight(index int, height []int) (output int){
 	output = 0
-	for i:=0; i< len(height); i++{
-		if height[i] > output{
-			output = height[i]
+	for j:=index+1; j< len(height); j++{
+		if height[j] > output{
+			output = height[j]
 		}
 	}
 	return output
