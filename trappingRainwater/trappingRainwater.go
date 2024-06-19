@@ -1,23 +1,29 @@
 package trappingRainWater
 
 import (
-	"fmt"
 	"math"
 )
 
-func trap(height []int) int {
-
-	fmt.Println(" ")
-
-	var output = 0
-
+func trap(height []int) int {	
 	if len(height) < 3 {
 		return 0
 	}
+	var output = 0
+	start:=geStart(height)
+	end:= getEnd(height)
+	for i:=start+1; i < end;i++{
+		maxRight:= getMaximumRight(i, height)
+		maxLeft:= getMaximumLeft(i, height)
+		trapped:= int(math.Min(float64(maxLeft), float64(maxRight))) - height[i]
+		if trapped >= 0{
+			output = output + trapped
+		}
+	}
+	return output
+}
 
-	start:=0
-	end:= len(height)-1
-
+func geStart(height []int) (start int) {
+	start =0
 	for{
 		if height[start] == 0{
 			start++
@@ -25,7 +31,11 @@ func trap(height []int) int {
 			break
 		}
 	}
+	return start
+}
 
+func getEnd(height []int) (end int) {
+	end= len(height)-1
 	for{
 		if height[end] == 0{
 			end--
@@ -33,20 +43,7 @@ func trap(height []int) int {
 			break
 		}
 	}
-
-	for i:=start+1; i < end;i++{
-			maxRight:= getMaximumRight(i, height)
-			maxLeft:= getMaximumLeft(i, height)
-			fmt.Print("maxLeft is ", maxLeft, " maxRight is ", maxRight, " i is ", i)
-			trapped:= int(math.Min(float64(maxLeft), float64(maxRight))) - height[i]
-			if trapped >= 0{
-				output = output + trapped
-			}
-			
-			fmt.Print(" output added is ", int(math.Min(float64(maxLeft), float64(maxRight))) - height[i])
-			fmt.Println(" ")
-	}
-	return output
+	return end
 }
 
 func getMaximumLeft(index int, height []int) (output int){
