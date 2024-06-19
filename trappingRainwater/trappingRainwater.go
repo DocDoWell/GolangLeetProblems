@@ -1,67 +1,35 @@
 package trappingRainWater
 
-import (
-	"math"
-)
-
-func trap(height []int) int {	
-	if len(height) < 3 {
-		return 0
-	}
-	var output = 0
-	start:=geStart(height)
-	end:= getEnd(height)
-	for i:=start+1; i < end;i++{
-		maxRight:= getMaximumRight(i, height)
-		maxLeft:= getMaximumLeft(i, height)
-		trapped:= int(math.Min(float64(maxLeft), float64(maxRight))) - height[i]
-		if trapped >= 0{
-			output = output + trapped
-		}
-	}
-	return output
+func trap(height []int) int {
+	output, leftPointer, rightPointer, leftBoundary, rightBoundary:= 0, 0, len(height)-1, 0, 0
+    for leftPointer <= rightPointer {
+        if leftBoundary <= rightBoundary {
+            if height[leftPointer] > min(leftBoundary, rightBoundary) {
+                leftBoundary = height[leftPointer]
+            }
+            output += max(min(leftBoundary, rightBoundary) - height[leftPointer], 0)
+            leftPointer++
+        } else {
+            if height[rightPointer] > min(leftBoundary, rightBoundary) {
+                rightBoundary = height[rightPointer]
+            }
+            output += max(min(leftBoundary, rightBoundary) - height[rightPointer], 0)
+            rightPointer--
+        }
+    }
+    return output
 }
 
-func geStart(height []int) (start int) {
-	start =0
-	for{
-		if height[start] == 0{
-			start++
-		}else{
-			break
-		}
+func min(leftBoundary, rightBoundary int) int {
+	if(leftBoundary < rightBoundary){
+		return leftBoundary
 	}
-	return start
+	return rightBoundary
 }
 
-func getEnd(height []int) (end int) {
-	end= len(height)-1
-	for{
-		if height[end] == 0{
-			end--
-		}else{
-			break
-		}
+func max(leftBoundary, rightBoundary int) int {
+	if(leftBoundary > rightBoundary){
+		return leftBoundary
 	}
-	return end
-}
-
-func getMaximumLeft(index int, height []int) (output int){
-	output = 0
-	for j:=0; j< index; j++{
-		if height[j] > output{
-			output = height[j]
-		}
-	}
-	return output
-}
-
-func getMaximumRight(index int, height []int) (output int){
-	output = 0
-	for j:=index+1; j< len(height); j++{
-		if height[j] > output{
-			output = height[j]
-		}
-	}
-	return output
+	return rightBoundary
 }
